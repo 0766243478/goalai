@@ -1,0 +1,20 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:5000",
+  "backendAuthType": "API key",
+  "backendApiKey": "\t sk-user-_stkz...c0jyU",
+  "executionArgs": {
+    "projectName": "goalai",
+    "projectPath": "c:\\Users\\humos\\Downloads\\goalai\\goalai",
+    "testIds": [],
+    "additionalInstruction": "This is a Next.js app running on port 5000. The app uses cookie-based sessions (goalai_user_id). The welcome page redirects to dashboard if user is onboarded. No login is required - users create guest sessions through the onboarding interview flow.",
+    "serverMode": "development",
+    "envs": {
+      "API_KEY": "sk-user-_stkzGvPrh-u5duicKpVPsCuL8gWNjKZeTsBBCahVLNg5Nz53TFmT0Uh2DtrjmEWcwC84BzZnFMDDAmS1HHt5bxflQ50Q9mKBJftriQWDJEyy5AQvJcQuLgMdI_n4hc0jyU"
+    }
+  },
+  "serverPort": 49433,
+  "proxy": "http://4bdeeb89-eb82-4dbe-8d1c-7880ddb57dad:RpPgPIGCBS7h6hMoWyM0GieypVKBsM89@tun.testsprite.com:8080"
+}

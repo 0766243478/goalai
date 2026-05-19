@@ -1,0 +1,46 @@
+{
+  "name": "goalai",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -H 0.0.0.0 -p 5000",
+    "build": "prisma generate && next build",
+    "start": "next start -H 0.0.0.0 -p 5000",
+    "lint": "next lint",
+    "db:push": "prisma db push",
+    "db:studio": "npx prisma studio"
+  },
+  "dependencies": {
+    "@google/genai": "^1.42.0",
+    "@prisma/client": "^5.22.0",
+    "@supabase/ssr": "^0.7.0",
+    "@supabase/supabase-js": "^2.49.1",
+    "date-fns": "^3.6.0",
+    "drizzle-zod": "^0.8.3",
+    "framer-motion": "^12.34.3",
+    "next": "15.0.8",
+    "p-limit": "^7.3.0",
+    "p-retry": "^7.1.1",
+    "react": "^18",
+    "react-dom": "^18",
+    "zod": "^4.3.6",
+    "zod-validation-error": "^5.0.0"
+  },
+  "overrides": {
+    "glob": "11.1.0"
+  },
+  "engines": {
+    "node": ">=20 <23"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "15.0.8",
+    "postcss": "^8",
+    "prisma": "^5.22.0",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}

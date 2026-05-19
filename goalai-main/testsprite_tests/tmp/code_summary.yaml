@@ -1,0 +1,183 @@
+version: "2"
+type: frontend
+tech_stack:
+  - TypeScript
+  - Next.js 15
+  - React 18
+  - Prisma ORM
+  - SQLite
+  - Tailwind CSS
+  - Framer Motion
+  - Google Gemini AI
+features:
+  - name: Welcome / Landing Page
+    description: Landing page that checks if user has an existing session and redirects to dashboard if onboarded, otherwise shows welcome screen
+    files:
+      - src/app/page.tsx
+      - src/components/WelcomeClient.tsx
+    endpoints: []
+    depends_on: []
+
+  - name: User Onboarding Interview
+    description: Multi-step interview flow that collects user context (north star goal, value skill, friction trigger, daily time window) and creates or updates user profile
+    files:
+      - src/app/interview/page.tsx
+      - src/app/onboarding/page.tsx
+    endpoints:
+      - method: POST
+        path: /api/user
+        description: Create or update user profile with onboarding data
+        auth_required: false
+        request_schema:
+          body:
+            northStar: string
+            valueSkill: string
+            frictionTrigger: string
+            dailyWindowMinutes: number
+        response_schema:
+          "200": User object with cookie set
+          "400": Invalid JSON body
+          "500": Failed to save configuration
+    depends_on: []
+
+  - name: Dashboard
+    description: Main dashboard showing today's 3 tasks with Day 0 task flow, locked state after Day 0 completion until next morning, and Day 8+ survey prompt
+    files:
+      - src/app/dashboard/page.tsx
+      - src/components/daily/
+    endpoints:
+      - method: GET
+        path: /api/dashboard
+        description: Get user profile, today's tasks, Day 0 status, lock status, and survey flag
+        auth_required: true
+        response_schema:
+          "200": "{ user, tasks, day0, locked, unlockTime, showSurvey }"
+          "500": Internal Server Error
+    depends_on:
+      - User Onboarding Interview
+      - Task Management
+
+  - name: Task Management
+    description: CRUD operations for daily tasks including AI-powered task generation via Gemini, task completion, task skipping, and trust score recalculation
+    files:
+      - src/app/api/tasks/route.ts
+      - src/app/api/tasks/[id]/route.ts
+      - src/lib/gemini.ts
+      - src/lib/trust.ts
+    endpoints:
+      - method: GET
+        path: /api/tasks
+        description: Get today's tasks for the current user
+        auth_required: true
+        response_schema:
+          "200": "{ tasks: Task[] }"
+          "500": Failed to fetch tasks
+      - method: POST
+        path: /api/tasks
+        description: Generate 3 new daily tasks using Gemini AI based on user profile and yesterday's performance
+        auth_required: true
+        response_schema:
+          "200": "{ tasks: Task[], header: string, generated: boolean }"
+          "401": No user session
+          "404": User not found
+          "500": Task generation failed
+      - method: PATCH
+        path: /api/tasks/{id}
+        description: Update task completion or skip status, recalculates trust score when all daily tasks resolved
+        auth_required: true
+        request_schema:
+          body:
+            completed: boolean
+            skipped: boolean
+        response_schema:
+          "200": "{ task: Task }"
+          "400": Invalid JSON body
+          "401": No user session
+          "404": Task not found
+          "500": Failed to update task
+    depends_on:
+      - User Onboarding Interview
+
+  - name: Trust Score System
+    description: Internal trust score (ITS) and load multiplier tracking to adaptively adjust task difficulty
+    files:
+      - src/lib/trust.ts
+      - src/app/api/tasks/trust/route.ts
+    endpoints:
+      - method: GET
+        path: /api/tasks/trust
+        description: Get current user's trust score and load multiplier
+        auth_required: true
+        response_schema:
+          "200": "{ its: number, loadMultiplier: number }"
+    depends_on:
+      - User Onboarding Interview
+
+  - name: User Profile Management
+    description: User session management including profile retrieval, sign out, and account deletion
+    files:
+      - src/app/api/user/route.ts
+      - src/app/api/user/signout/route.ts
+      - src/app/api/user/delete/route.ts
+    endpoints:
+      - method: GET
+        path: /api/user
+        description: Get current user profile from session cookie
+        auth_required: false
+        response_schema:
+          "200": "{ user: User | null }"
+      - method: POST
+        path: /api/user/signout
+        description: Sign out by clearing session cookie
+        auth_required: false
+        response_schema:
+          "200": "{ success: true }"
+      - method: DELETE
+        path: /api/user/delete
+        description: Delete user account and all associated data (tasks, trust events)
+        auth_required: true
+        response_schema:
+          "200": "{ success: true }"
+          "401": Not signed in
+    depends_on: []
+
+  - name: Day 8 Survey
+    description: Feedback survey shown to users after 8 days of usage to collect trust event data
+    files:
+      - src/app/survey/page.tsx
+      - src/app/api/survey/route.ts
+    endpoints:
+      - method: POST
+        path: /api/survey
+        description: Submit Day 8 survey responses
+        auth_required: true
+        request_schema:
+          body:
+            survey_data: object
+        response_schema:
+          "200": "{ success: true }"
+          "401": No user session
+    depends_on:
+      - User Onboarding Interview
+
+  - name: Settings Page
+    description: User settings page for managing account preferences
+    files:
+      - src/app/settings/page.tsx
+    endpoints: []
+    depends_on:
+      - User Profile Management
+
+known_limitations:
+  - issue: No input validation on user creation fields (northStar, valueSkill)
+    location: src/app/api/user/route.ts
+    impact: Any string accepted without length or content validation
+  - issue: Silent catch block on user deletion errors
+    location: src/app/api/user/delete/route.ts
+    impact: Deletion failures are silently ignored
+  - issue: No rate limiting on AI task generation endpoint
+    location: src/app/api/tasks/route.ts
+    impact: Users could trigger excessive Gemini API calls
+  - issue: Cookie-based auth without CSRF protection
+    location: All API routes
+    impact: Potential CSRF vulnerability on state-mutating endpoints

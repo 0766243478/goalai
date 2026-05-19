@@ -1,0 +1,39 @@
+[
+  {
+    "id": "TC001",
+    "title": "Malformed or incomplete survey submission shows an error and preserves the user’s answers for retry",
+    "description": "Verifies that invalid payload scenarios surface a visible error and that previously entered answers remain on the form.",
+    "category": "Day 8 Survey",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Day 8 survey page (use the app’s available navigation to reach the survey page, starting from the first loaded page)."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Day 8\" is visible."
+      },
+      {
+        "type": "action",
+        "description": "Fill a non-required/free-text field (if present) with \"Some feedback text\" and leave at least one required field blank."
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Submit\"."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"error\" is visible or an equivalent visible submission failure message is shown."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the previously entered text \"Some feedback text\" is still visible in the same field."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the page still shows the survey form (not a thank-you screen)."
+      }
+    ]
+  }
+]

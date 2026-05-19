@@ -1,0 +1,28 @@
+{
+  "name": "Gan Network - AI-Powered Decision Elimination System",
+  "short_name": "Gan",
+  "description": "AI-powered productivity app that eliminates decision fatigue. Get exactly 3 personalized daily tasks calibrated to your capacity. Stop deciding. Start executing.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafbfc",
+  "theme_color": "#1e40af",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "categories": ["productivity", "utilities"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
