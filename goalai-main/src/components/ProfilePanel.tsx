@@ -30,7 +30,7 @@ export default function ProfilePanel({ open, onClose }: ProfilePanelProps) {
   const [newItem, setNewItem] = useState("");
   const [saving, setSaving] = useState(false);
   const [swotTab, setSwotTab] = useState<"strengths" | "weaknesses" | "opportunities" | "threats">("strengths");
-  const setLoading = useState(false)[1];
+  const [, setLoading] = useState(false);
 
   const loadProfile = useCallback(async () => {
     if (!open) return;

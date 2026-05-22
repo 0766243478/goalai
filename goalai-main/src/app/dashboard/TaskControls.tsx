@@ -61,7 +61,7 @@ export default function TaskControls({ taskCooldowns, setTaskCooldowns }: TaskCo
         await loadData();
       }
     },
-    [taskCooldowns, setTaskCooldowns, setTasks, loadData]
+    [taskCooldowns, setTasks, loadData]
   );
 
   const handleSave = useCallback(
