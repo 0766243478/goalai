@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
 import { ensureGuestUser, GUEST_COOKIE, DEV_USER_ID } from '@/lib/dev-auth';
 
 export async function POST() {

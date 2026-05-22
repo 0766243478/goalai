@@ -90,7 +90,7 @@ export default function Onboarding() {
 
       await supabase.from('tasks').insert(genesisTasks);
       
-      showToast("Profile created successfully! Welcome to Gan Network.", "success");
+      showToast("Profile created successfully! Welcome to GoalAI.", "success");
       navigate('/dashboard'); // Redirect to dashboard after successful save
       
     } catch (error) {
@@ -121,7 +121,7 @@ export default function Onboarding() {
     <div className="min-h-screen bg-gan-navy flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-slate-800 rounded-xl shadow-2xl p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Gan Network</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">GoalAI</h1>
           <p className="text-gray-400">Complete your profile to start your journey</p>
         </div>
 

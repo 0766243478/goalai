@@ -62,7 +62,7 @@ export default function Login() {
     <div className="min-h-screen bg-gan-navy flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-slate-800 rounded-xl shadow-2xl p-8">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gan-gold mb-2">Gan Network</h1>
+          <h1 className="text-4xl font-bold text-gan-gold mb-2">GoalAI</h1>
           <p className="text-gray-400">The sovereign goal-tracking platform</p>
         </div>
 
@@ -112,7 +112,7 @@ export default function Login() {
 
         <div className="mt-8 p-4 bg-slate-700/50 rounded-lg">
           <h3 className="text-sm font-semibold text-gray-300 mb-2">Demo Credentials:</h3>
-          <p className="text-xs text-gray-400">Email: demo@gan.network</p>
+          <p className="text-xs text-gray-400">Email: demo@goalai.app</p>
           <p className="text-xs text-gray-400">Password: demo123</p>
         </div>
       </div>

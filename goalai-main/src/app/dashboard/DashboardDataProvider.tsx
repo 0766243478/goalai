@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useCallback, useState, ReactNode } from "react";
+import { createContext, useContext, useCallback, useState, useEffect, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 
 export interface Task {
@@ -146,9 +146,6 @@ export default function DashboardDataProvider({ children }: DashboardDataProvide
 
 function TrustScoreLoader({ onLoad }: { onLoad: () => Promise<void> }) {
   // Trigger trust score load once on mount
-  const [loaded] = useState(() => {
-    onLoad();
-    return true;
-  });
+  useEffect(() => { onLoad(); }, [onLoad]);
   return null;
 }

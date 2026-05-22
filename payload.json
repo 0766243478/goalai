@@ -1,0 +1,16 @@
+{
+    "messages":  [
+                     {
+                         "content":  "مرحباً، كيف حالك؟",
+                         "role":  "user"
+                     }
+                 ],
+    "stream":  true,
+    "chat_template_kwargs":  {
+                                 "thinking":  true
+                             },
+    "max_tokens":  16384,
+    "temperature":  1,
+    "model":  "moonshotai/kimi-k2.6",
+    "top_p":  1
+}

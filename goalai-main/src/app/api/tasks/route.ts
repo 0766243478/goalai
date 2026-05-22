@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
       body = null;
     }
 
-    if (body && typeof body === 'object' && (body as any)?.title) {
+    if (body && typeof body === 'object' && (body as Record<string, unknown>)?.title) {
       // CUSTOM TASK CREATION (Add Task form)
       const parsed = CreateTaskSchema.safeParse(body);
       if (!parsed.success) {

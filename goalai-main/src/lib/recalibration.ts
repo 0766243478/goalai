@@ -139,7 +139,7 @@ export function buildReliefPlan(input: {
   const scheduledTaskIds = new Set<string>();
 
   // Filter tasks and interruptions that can be scheduled
-  let activeQueue = [...items];
+  const activeQueue = [...items];
 
   let currentOffset = 0; // minutes from now
   const finalScheduledItems: { item: ScheduleItem; scheduledDuration: number }[] = [];
@@ -148,7 +148,7 @@ export function buildReliefPlan(input: {
     // Check if any deadline-constrained item is "critical"
     // Critical means: if we don't start it now, it will violate its deadline.
     // i.e., currentOffset + item.duration >= item.deadlineOffset
-    let criticalItemIndex = activeQueue.findIndex((item) => {
+    const criticalItemIndex = activeQueue.findIndex((item) => {
       if (item.deadlineOffset === null) return false;
       return currentOffset + item.duration >= item.deadlineOffset;
     });

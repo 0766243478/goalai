@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface TaskCardProps {
   task: {
@@ -87,29 +87,6 @@ export default function TaskCard({
 
   const isLocked = retryAfterSeconds > 0;
 
-  if (task.completed) {
-    return (
-      <div className="bg-gray-50 border border-gray-200 rounded-2xl p-5 relative">
-        <p className="text-sm text-gray-400 line-through">{task.title}</p>
-        <p className="text-xs text-gray-300 mt-1">Logged.</p>
-      </div>
-    );
-  }
-
-  if (task.skipped) {
-    return (
-      <motion.div
-        initial={{ opacity: 1 }}
-        animate={{ opacity: 0.3 }}
-        transition={{ duration: 0.5 }}
-        className="bg-gray-50 border border-gray-200 rounded-2xl p-5"
-      >
-        <p className="text-sm text-gray-400 line-through">{task.title}</p>
-        <p className="text-xs text-gray-300 mt-1">Pattern detected. Refining flow.</p>
-      </motion.div>
-    );
-  }
-
   const handleSave = useCallback(async () => {
     if (!onSave) return;
     setSaving(true);
@@ -155,6 +132,29 @@ export default function TaskCard({
       setConfirming(true);
     }
   };
+
+  if (task.completed) {
+    return (
+      <div className="bg-gray-50 border border-gray-200 rounded-2xl p-5 relative">
+        <p className="text-sm text-gray-400 line-through">{task.title}</p>
+        <p className="text-xs text-gray-300 mt-1">Logged.</p>
+      </div>
+    );
+  }
+
+  if (task.skipped) {
+    return (
+      <motion.div
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 0.3 }}
+        transition={{ duration: 0.5 }}
+        className="bg-gray-50 border border-gray-200 rounded-2xl p-5"
+      >
+        <p className="text-sm text-gray-400 line-through">{task.title}</p>
+        <p className="text-xs text-gray-300 mt-1">Pattern detected. Refining flow.</p>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div

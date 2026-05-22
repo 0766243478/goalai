@@ -155,7 +155,7 @@ export default function Dashboard() {
       {/* Header */}
       <header className="bg-slate-800 border-b border-slate-700 px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gan-gold">Gan Network</h1>
+          <h1 className="text-2xl font-bold text-gan-gold">GoalAI</h1>
           <button
             onClick={handleSignOut}
             className="flex items-center gap-2 px-4 py-2 text-gray-400 hover:text-white transition"
