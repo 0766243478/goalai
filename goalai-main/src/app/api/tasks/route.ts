@@ -1,22 +1,41 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { generateTasks } from '@/lib/gemini';
 import { format, subDays } from 'date-fns';
-import { applySupabaseCookies, createSupabaseRouteClient } from '@/lib/supabase/route';
+import { applySupabaseCookies, getAuthenticatedUser } from '@/lib/supabase/route';
 import type { Prisma } from '@prisma/client';
+import { z } from 'zod';
+
+const CreateTaskSchema = z.object({
+  title: z.string().min(1).optional(),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH']).optional(),
+  duration: z.number().int().min(5).max(480).optional(),
+  type: z.enum(['EXECUTE', 'VALUE', 'RESET']).optional(),
+  description: z.string().optional(),
+  hook: z.string().optional(),
+}).strict();
 
 export async function GET() {
   try {
-    const { supabase, cookiesToSet } = await createSupabaseRouteClient();
-    const { data } = await supabase.auth.getUser();
-    const authUser = data.user;
-    if (!authUser || authUser.email_confirmed_at == null) {
+    const { user: authUser, cookiesToSet } = await getAuthenticatedUser();
+    if (!authUser) {
       return applySupabaseCookies(NextResponse.json({ tasks: [] }), cookiesToSet);
     }
 
     const today = format(new Date(), 'yyyy-MM-dd');
     const tasks = await prisma.task.findMany({
       where: { userId: authUser.id, date: today },
+      select: {
+        id: true,
+        type: true,
+        title: true,
+        duration: true,
+        hook: true,
+        completed: true,
+        skipped: true,
+        isDay0: true,
+        orderIndex: true,
+      },
       orderBy: { orderIndex: 'asc' },
     });
 
@@ -26,25 +45,66 @@ export async function GET() {
   }
 }
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
-    const { supabase, cookiesToSet } = await createSupabaseRouteClient();
-    const { data } = await supabase.auth.getUser();
-    const authUser = data.user;
+    const { user: authUser, cookiesToSet } = await getAuthenticatedUser();
     if (!authUser) {
-      return applySupabaseCookies(
-        NextResponse.json({ error: 'Not authenticated' }, { status: 401 }),
-        cookiesToSet
-      );
-    }
-    if (authUser.email_confirmed_at == null) {
-      return applySupabaseCookies(
-        NextResponse.json({ error: 'Email not verified' }, { status: 403 }),
-        cookiesToSet
-      );
+      return applySupabaseCookies(NextResponse.json({ error: 'Not authenticated' }, { status: 401 }), cookiesToSet);
     }
 
     const today = format(new Date(), 'yyyy-MM-dd');
+
+    // Try to parse body — if it has a title, this is a custom Add Task request
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      body = null;
+    }
+
+    if (body && typeof body === 'object' && (body as any)?.title) {
+      // CUSTOM TASK CREATION (Add Task form)
+      const parsed = CreateTaskSchema.safeParse(body);
+      if (!parsed.success) {
+        return applySupabaseCookies(NextResponse.json({ error: 'Invalid request body' }, { status: 400 }), cookiesToSet);
+      }
+
+      const data = parsed.data!;
+      const count = await prisma.task.count({ where: { userId: authUser.id, date: today } });
+      const typeUpper = (data.type || 'EXECUTE').toUpperCase();
+      const priority = data.priority || 'MEDIUM';
+
+      const created = await prisma.task.create({
+        data: {
+          userId: authUser.id,
+          date: today,
+          type: typeUpper as 'EXECUTE' | 'VALUE' | 'RESET',
+          title: data.title || 'New Task',
+          description: data.description || data.title || 'New Task',
+          duration: data.duration || 30,
+          hook: data.hook || '',
+          orderIndex: count,
+        },
+      });
+
+      try {
+        await prisma.taskPattern.create({
+          data: {
+            userId: authUser.id,
+            taskType: typeUpper,
+            title: (data.title || 'new task').trim().toLowerCase(),
+            duration: data.duration || 30,
+            priority: priority,
+          },
+        });
+      } catch {
+        // pattern storage non-critical
+      }
+
+      return applySupabaseCookies(NextResponse.json({ task: created }), cookiesToSet);
+    }
+
+    // LEGACY AI GENERATION (no body / Generate button)
     const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const existing = await tx.task.findMany({
         where: { userId: authUser.id, date: today, isDay0: false },

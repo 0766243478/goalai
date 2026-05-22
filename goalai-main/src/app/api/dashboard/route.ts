@@ -1,22 +1,14 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { format } from 'date-fns';
-import { applySupabaseCookies, createSupabaseRouteClient } from '@/lib/supabase/route';
+import { applySupabaseCookies, getAuthenticatedUser } from '@/lib/supabase/route';
 
 export async function GET() {
   try {
-    const { supabase, cookiesToSet } = await createSupabaseRouteClient();
-    const { data } = await supabase.auth.getUser();
-    const authUser = data.user;
+    const { user: authUser, cookiesToSet } = await getAuthenticatedUser();
     if (!authUser) {
       return applySupabaseCookies(
         NextResponse.json({ user: null, tasks: [], day0: null }),
-        cookiesToSet
-      );
-    }
-    if (authUser.email_confirmed_at == null) {
-      return applySupabaseCookies(
-        NextResponse.json({ error: 'Email not verified' }, { status: 403 }),
         cookiesToSet
       );
     }
@@ -62,21 +54,37 @@ export async function GET() {
 
     const todayTasks = await prisma.task.findMany({
       where: { userId: authUser.id, date: today, isDay0: false },
+      select: {
+        id: true,
+        type: true,
+        title: true,
+        duration: true,
+        hook: true,
+        completed: true,
+        skipped: true,
+        isDay0: true,
+        orderIndex: true,
+      },
       orderBy: { orderIndex: 'asc' },
     });
 
+    // Only return active (non-completed, non-skipped) tasks to the frontend
+    const activeTasks = todayTasks.filter((t) => !t.completed && !t.skipped);
+    const allTasksCompleted = todayTasks.length > 0 && todayTasks.every((t) => t.completed || t.skipped);
+
     return applySupabaseCookies(
       NextResponse.json({
-      user: {
-        id: user.id,
-        northStar: user.northStar,
-        valueSkill: user.valueSkill,
-        dailyWindowMinutes: user.dailyWindowMinutes,
-      },
-      tasks: todayTasks,
-      day0: null,
-      locked: false,
-      showSurvey,
+        user: {
+          id: user.id,
+          northStar: user.northStar,
+          valueSkill: user.valueSkill,
+          dailyWindowMinutes: user.dailyWindowMinutes,
+        },
+        tasks: activeTasks,
+        allTasksCompleted,
+        day0: null,
+        locked: false,
+        showSurvey,
       }),
       cookiesToSet
     );

@@ -10,13 +10,16 @@ import {
 import { format } from 'date-fns';
 import { z } from 'zod';
 import { generateIntegrityHash, getIntegrityWindowRetryAfterSeconds } from '@/lib/gan-logic';
-import { applySupabaseCookies, createSupabaseRouteClient } from '@/lib/supabase/route';
+import { applySupabaseCookies, getAuthenticatedUser } from '@/lib/supabase/route';
 import type { Prisma } from '@prisma/client';
 
 const PatchBodySchema = z
   .object({
     completed: z.boolean().optional(),
     skipped: z.boolean().optional(),
+    title: z.string().min(1).optional(),
+    priority: z.enum(['LOW', 'MEDIUM', 'HIGH']).optional(),
+    duration: z.number().int().min(5).max(480).optional(),
   })
   .strict();
 
@@ -25,18 +28,10 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { supabase, cookiesToSet } = await createSupabaseRouteClient();
-    const { data } = await supabase.auth.getUser();
-    const authUser = data.user;
+    const { user: authUser, cookiesToSet } = await getAuthenticatedUser();
     if (!authUser) {
       return applySupabaseCookies(
         NextResponse.json({ error: 'Not authenticated' }, { status: 401 }),
-        cookiesToSet
-      );
-    }
-    if (authUser.email_confirmed_at == null) {
-      return applySupabaseCookies(
-        NextResponse.json({ error: 'Email not verified' }, { status: 403 }),
         cookiesToSet
       );
     }
@@ -52,9 +47,11 @@ export async function PATCH(
     if (!parsed.success) {
       return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
     }
-    const { completed, skipped } = parsed.data;
-    if (completed !== true && skipped !== true) {
-      return NextResponse.json({ error: 'No state change provided' }, { status: 400 });
+    const { completed, skipped, title, priority, duration } = parsed.data;
+    const hasStatusChange = completed === true || skipped === true;
+    const hasContentChange = title !== undefined || priority !== undefined || duration !== undefined;
+    if (!hasStatusChange && !hasContentChange) {
+      return NextResponse.json({ error: 'No state change or content update provided' }, { status: 400 });
     }
 
     const now = new Date();
@@ -85,6 +82,9 @@ export async function PATCH(
           completed: completed ?? task.completed,
           completedAt: completed === true && !task.completed ? now : task.completedAt,
           skipped: skipped ?? task.skipped,
+          ...(title !== undefined && { title }),
+          ...(priority !== undefined && { type: priority === 'LOW' ? 'RESET' : priority === 'HIGH' ? 'EXECUTE' : 'VALUE' }),
+          ...(duration !== undefined && { duration }),
         },
       });
       if (updateResult.count !== 1) {
@@ -96,6 +96,44 @@ export async function PATCH(
       });
       if (!updated) {
         return null;
+      }
+
+      // When user customizes a task (title/priority/duration), record the pattern
+      // for the Adaptive Learning Engine's next recalibration.
+      // This must execute inside the same transaction to guarantee consistency.
+      if (hasContentChange && (title !== undefined || priority !== undefined || duration !== undefined)) {
+        const taskType = priority === 'LOW' ? 'RESET' : priority === 'HIGH' ? 'EXECUTE' : 'VALUE';
+        const normalizedTitle = (title ?? task.title).trim().toLowerCase();
+
+        const existingPattern = await tx.taskPattern.findFirst({
+          where: {
+            userId: authUser.id,
+            taskType,
+            title: normalizedTitle,
+          },
+        });
+
+        if (existingPattern) {
+          await tx.taskPattern.updateMany({
+            where: { id: existingPattern.id },
+            data: {
+              duration: duration ?? task.duration,
+              priority: priority ?? task.type,
+              count: { increment: 1 },
+              lastUsedAt: now,
+            },
+          });
+        } else {
+          await tx.taskPattern.create({
+            data: {
+              userId: authUser.id,
+              taskType,
+              title: normalizedTitle,
+              duration: duration ?? task.duration,
+              priority: priority ?? task.type,
+            },
+          });
+        }
       }
 
       if (completed === true && !task.completed) {
@@ -253,5 +291,30 @@ export async function PATCH(
       );
     }
     return NextResponse.json({ error: 'Failed to update task' }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { user: authUser, cookiesToSet } = await getAuthenticatedUser();
+    if (!authUser) {
+      return applySupabaseCookies(NextResponse.json({ error: 'Not authenticated' }, { status: 401 }), cookiesToSet);
+    }
+
+    const { id } = await params;
+    const deleted = await prisma.task.deleteMany({
+      where: { id, userId: authUser.id },
+    });
+
+    if (deleted.count === 0) {
+      return applySupabaseCookies(NextResponse.json({ error: 'Task not found' }, { status: 404 }), cookiesToSet);
+    }
+
+    return applySupabaseCookies(NextResponse.json({ success: true }), cookiesToSet);
+  } catch {
+    return NextResponse.json({ error: 'Failed to delete task' }, { status: 500 });
   }
 }

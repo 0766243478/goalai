@@ -10,11 +10,11 @@ export default function Onboarding() {
     <div className="min-h-screen flex flex-col bg-relief-bg">
       <main className="flex-1 flex flex-col items-center justify-center p-6">
         <div className="mb-8 flex justify-center">
-          <Image src="/logo.png" alt="Gan Network" width={64} height={64} className="object-contain" />
+          <Image src="/logo.png" alt="GoalAI" width={64} height={64} className="object-contain" />
         </div>
 
         <h1 className="text-2xl font-semibold text-gray-900 text-center mb-2">
-          Gan Network
+          GoalAI
         </h1>
 
         <p className="text-gray-400 text-center mb-10 max-w-xs text-sm leading-relaxed">

@@ -28,8 +28,12 @@ model User {
   createdAt           DateTime  @default(now()) @map("created_at")
   updatedAt           DateTime  @updatedAt
 
-  tasks       Task[]
-  trustEvents TrustEvent[]
+  tasks            Task[]
+  trustEvents      TrustEvent[]
+  sessions         WorkSession[]
+  interruptionLogs InterruptionLog[]
+  taskPatterns     TaskPattern[]
+  swotProfile      SwotProfile?
 
   @@map("gan_users")
 }
@@ -51,8 +55,85 @@ model Task {
   createdAt   DateTime  @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activeInSessions WorkSession[] @relation("ActiveTask")
+  pausedInterruptions InterruptionLog[] @relation("PausedTask")
 
   @@index([userId, date])
+}
+
+model TaskPattern {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  taskType  String   @map("task_type")
+  title     String
+  duration  Int      @default(30)
+  priority  String   @default("MEDIUM")
+  count     Int      @default(1)
+  createdAt DateTime @default(now()) @map("created_at")
+  lastUsedAt DateTime @default(now()) @map("last_used_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, taskType, title])
+  @@map("task_patterns")
+}
+
+model SwotProfile {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @unique @db.Uuid
+  strengths   String   @default("[]")  // JSON array of strings
+  weaknesses  String   @default("[]")  // JSON array of strings
+  opportunities String @default("[]")  // JSON array of strings
+  threats     String   @default("[]")  // JSON array of strings
+  weaknessesOvercome String @default("[]") @map("weaknesses_overcome")  // JSON array of overcome item texts
+  threatsResolved   String @default("[]") @map("threats_resolved")     // JSON array of resolved item texts
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("swot_profiles")
+}
+
+model WorkSession {
+  id                       String   @id @default(uuid()) @db.Uuid
+  userId                   String   @db.Uuid
+  activeTaskId             String?  @db.Uuid
+  activeTaskRemainingSeconds Int?
+  startedAt                DateTime @default(now())
+  endedAt                  DateTime?
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activeTask    Task?            @relation("ActiveTask", fields: [activeTaskId], references: [id], onDelete: SetNull)
+  interruptions InterruptionLog[]
+
+  @@index([userId, startedAt])
+  @@map("work_sessions")
+}
+
+model InterruptionLog {
+  id             String   @id @default(uuid()) @db.Uuid
+  userId         String   @db.Uuid
+  sessionId      String   @db.Uuid
+  pausedTaskId   String?  @db.Uuid
+  title          String
+  context        String?
+  deadline       DateTime?
+  createdAt      DateTime @default(now())
+  endedAt        DateTime?
+  durationSeconds Int?
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session    WorkSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  pausedTask Task?       @relation("PausedTask", fields: [pausedTaskId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([sessionId])
+  @@index([pausedTaskId])
+  @@map("interruption_logs")
 }
 
 model TrustEvent {

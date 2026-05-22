@@ -4,9 +4,14 @@ import WelcomeClient from "@/components/WelcomeClient";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export default async function Welcome() {
-  const supabase = await createSupabaseServerClient();
-  const { data } = await supabase.auth.getUser();
-  const authUser = data.user;
+  const supabase = await createSupabaseServerClient({ timeoutMs: 4000 });
+  let authUser: Awaited<ReturnType<typeof supabase.auth.getUser>>["data"]["user"] = null;
+  try {
+    const { data } = await supabase.auth.getUser();
+    authUser = data.user;
+  } catch {
+    authUser = null;
+  }
 
   if (authUser?.email_confirmed_at == null && authUser) {
     redirect("/verify-email");

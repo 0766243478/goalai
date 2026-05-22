@@ -1,4 +1,4 @@
-const CACHE_NAME = 'goalai-v3';
+const CACHE_NAME = 'goalai-v4';
 
 const PRECACHE_ASSETS = [
   '/',

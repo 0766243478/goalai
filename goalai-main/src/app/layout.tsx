@@ -7,11 +7,11 @@ const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://gan.network";
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
   title: {
-    default: "Gan Network - AI-Powered Decision Elimination System | 3 Daily Tasks",
-    template: "%s | Gan Network",
+    default: "GoalAI - AI-Powered Decision Elimination System | 3 Daily Tasks",
+    template: "%s | GoalAI",
   },
   description:
-    "Gan Network eliminates decision fatigue by giving you exactly 3 personalized daily tasks calibrated to your capacity. Stop deciding. Start executing. AI-powered productivity without the overwhelm.",
+    "GoalAI eliminates decision fatigue by giving you exactly 3 personalized daily tasks calibrated to your capacity. Stop deciding. Start executing. AI-powered productivity without the overwhelm.",
   keywords: [
     "decision fatigue",
     "AI task manager",
@@ -22,24 +22,24 @@ export const metadata: Metadata = {
     "task management",
     "focus app",
     "daily planner",
-    "Gan Network",
+    "GoalAI",
     "personalized tasks",
     "reduce overwhelm",
     "3 daily tasks",
     "smart task generation",
   ],
-  authors: [{ name: "Gan Network" }],
-  creator: "Gan Network",
-  publisher: "Gan Network",
+  authors: [{ name: "GoalAI" }],
+  creator: "GoalAI",
+  publisher: "GoalAI",
   manifest: "/manifest.json",
   category: "productivity",
-  applicationName: "Gan Network",
+  applicationName: "GoalAI",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: appUrl,
-    siteName: "Gan Network",
-    title: "Gan Network - Stop Deciding. Start Executing.",
+    siteName: "GoalAI",
+    title: "GoalAI - Stop Deciding. Start Executing.",
     description:
       "AI-powered Decision Elimination System. Get exactly 3 personalized daily tasks calibrated to your energy and capacity. No more decision fatigue.",
     images: [
@@ -47,13 +47,13 @@ export const metadata: Metadata = {
         url: "/icons/icon-512.png",
         width: 512,
         height: 512,
-        alt: "Gan Network - Decision Elimination System",
+        alt: "GoalAI - Decision Elimination System",
       },
     ],
   },
   twitter: {
     card: "summary",
-    title: "Gan Network - AI-Powered Decision Elimination System",
+    title: "GoalAI - AI-Powered Decision Elimination System",
     description:
       "Stop deciding. Start executing. 3 AI-generated tasks every day, calibrated to your capacity.",
     images: ["/icons/icon-512.png"],
@@ -75,7 +75,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Gan Network",
+    title: "GoalAI",
   },
   formatDetection: {
     telephone: false,
@@ -96,7 +96,7 @@ export const viewport: Viewport = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  name: "Gan Network",
+  name: "GoalAI",
   applicationCategory: "ProductivityApplication",
   operatingSystem: "Web",
   description:
@@ -125,34 +125,34 @@ const faqJsonLd = {
   mainEntity: [
     {
       "@type": "Question",
-      name: "What is Gan Network?",
+      name: "What is GoalAI?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Gan Network is an AI-powered Decision Elimination System that gives you exactly 3 personalized daily tasks calibrated to your energy and capacity. It eliminates decision fatigue by deciding what you should focus on each day.",
+        text: "GoalAI is an AI-powered Decision Elimination System that gives you exactly 3 personalized daily tasks calibrated to your energy and capacity. It eliminates decision fatigue by deciding what you should focus on each day.",
       },
     },
     {
       "@type": "Question",
-      name: "How does Gan Network work?",
+      name: "How does GoalAI work?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Gan Network uses AI to generate 3 daily tasks across three categories: Execute (your main goal), Value (income-generating skill), and Reset (mental clarity). Tasks adapt based on your Internal Trust Score, which tracks your completion patterns.",
+        text: "GoalAI uses AI to generate 3 daily tasks across three categories: Execute (your main goal), Value (income-generating skill), and Reset (mental clarity). Tasks adapt based on your Internal Trust Score, which tracks your completion patterns.",
       },
     },
     {
       "@type": "Question",
-      name: "Is Gan Network free to use?",
+      name: "Is GoalAI free to use?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes, Gan Network is completely free. No sign-up required - you can start as a guest immediately. It works as a Progressive Web App that you can add to your home screen.",
+        text: "Yes, GoalAI is completely free. No sign-up required - you can start as a guest immediately. It works as a Progressive Web App that you can add to your home screen.",
       },
     },
     {
       "@type": "Question",
-      name: "What makes Gan Network different from other task managers?",
+      name: "What makes GoalAI different from other task managers?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Unlike traditional task managers where you decide what to do, Gan Network decides for you. It limits you to exactly 3 tasks per day, uses AI to calibrate difficulty to your capacity, and adapts over time based on your completion patterns. No gamification, no streaks - just calm, focused execution.",
+        text: "Unlike traditional task managers where you decide what to do, GoalAI decides for you. It limits you to exactly 3 tasks per day, uses AI to calibrate difficulty to your capacity, and adapts over time based on your completion patterns. No gamification, no streaks - just calm, focused execution.",
       },
     },
   ],
