@@ -3,7 +3,7 @@ import { applySupabaseCookies, createSupabaseRouteClient } from '@/lib/supabase/
 import { GUEST_COOKIE } from '@/lib/dev-auth';
 
 export async function POST() {
-  let response = NextResponse.json({ success: true });
+  let response: NextResponse = NextResponse.json({ success: true });
 
   // Sign out of Supabase
   try {
