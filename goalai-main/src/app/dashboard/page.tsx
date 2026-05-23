@@ -14,20 +14,19 @@ export default async function DashboardPage() {
 
   // Try Supabase auth first
   let userId: string | null = null;
+  let needsEmailConfirm = false;
   try {
     const supabase = await createSupabaseServerClient();
     const { data } = await supabase.auth.getUser();
     if (data?.user) {
-      if (data.user.email_confirmed_at == null) redirect("/verify-email");
+      needsEmailConfirm = data.user.email_confirmed_at == null;
       userId = data.user.id;
     }
-  } catch (e) {
-    // Re-throw redirect errors (NEXT_REDIRECT) so Next.js handles them
-    if (typeof e === 'object' && e !== null && 'digest' in e && String((e as { digest: unknown }).digest).startsWith('NEXT_REDIRECT')) {
-      throw e;
-    }
+  } catch {
     // Supabase unavailable — continue to fallback
   }
+
+  if (needsEmailConfirm) redirect("/verify-email");
 
   // Fallback: guest/dev session
   if (!userId) {

@@ -9,7 +9,7 @@ export default async function Welcome() {
   try {
     const supabase = await createSupabaseServerClient({ timeoutMs: 4000 });
     const { data } = await supabase.auth.getUser();
-    authUser = data.user ? { id: data.user.id, email_confirmed_at: data.user.email_confirmed_at } : null;
+    authUser = data.user ? { id: data.user.id, email_confirmed_at: data.user.email_confirmed_at ?? null } : null;
   } catch {
     // Supabase unavailable — proceed unauthenticated
   }
