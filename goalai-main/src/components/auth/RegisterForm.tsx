@@ -35,7 +35,7 @@ export default function RegisterForm() {
     } catch {
       setError("Unable to sign up. Please try again.");
     } finally {
-      setBusy(null);
+      setBusy(false);
     }
   };
 
@@ -69,7 +69,7 @@ export default function RegisterForm() {
             disabled={!email.trim() || password.length < 6 || busy}
             className="w-full bg-gray-900 text-white rounded-xl text-base py-4 font-medium hover:bg-gray-800 transition-colors disabled:opacity-40"
           >
-            {busy ? "Creating account" : "Sign up"}
+            {busy ? "Creating account..." : "Sign up"}
           </button>
         </div>
 

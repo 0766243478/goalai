@@ -41,7 +41,7 @@ export default function LoginForm() {
     } catch {
       setError("Unable to sign in. Please try again.");
     } finally {
-      setBusy(null);
+      setBusy(false);
     }
   };
 
@@ -72,10 +72,10 @@ export default function LoginForm() {
           {error && <p className="text-red-500 text-xs text-center">{error}</p>}
           <button
             onClick={handleSignIn}
-            disabled={!email.trim() || password.length < 6 || busy}
+            disabled={!email.trim() || busy}
             className="w-full bg-gray-900 text-white rounded-xl text-base py-4 font-medium hover:bg-gray-800 transition-colors disabled:opacity-40"
           >
-            {busy ? "Signing in" : "Sign in"}
+            {busy ? "Signing in..." : "Sign in"}
           </button>
         </div>
 
