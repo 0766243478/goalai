@@ -9,6 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        'brand-blue': '#233dff',
         'deep-blue': '#1e40af',
         'soft-purple': '#7c6bae',
         'light-blue': '#5b9bd5',
