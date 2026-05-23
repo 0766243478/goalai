@@ -21,8 +21,12 @@ export default async function DashboardPage() {
       if (data.user.email_confirmed_at == null) redirect("/verify-email");
       userId = data.user.id;
     }
-  } catch {
-    // Supabase unavailable
+  } catch (e) {
+    // Re-throw redirect errors (NEXT_REDIRECT) so Next.js handles them
+    if (typeof e === 'object' && e !== null && 'digest' in e && String((e as { digest: unknown }).digest).startsWith('NEXT_REDIRECT')) {
+      throw e;
+    }
+    // Supabase unavailable — continue to fallback
   }
 
   // Fallback: guest/dev session
