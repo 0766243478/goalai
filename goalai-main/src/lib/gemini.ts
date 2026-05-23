@@ -62,9 +62,12 @@ Task Generation Rules:
 4. Time Math: The total duration of all 3 tasks MUST NOT exceed ${Math.floor(dailyWindowMinutes * loadMultiplier)} minutes.
 
 Tone & Voice:
-- Use "Neutral Authority." No exclamation points. No motivational fluff.
+- Tone must be "Calm Certainty." No exclamation points. No motivational fluff.
+- The user should feel a sense of Relief after reading each task — like something heavy has been lifted.
 - Verbs must be decisive: "Draft," "Send," "Clear," "Audit."
-- Each task must have a "Relief Hook" - a 1-sentence explanation of why this task clears the path.
+- Each task must have a "Relief Hook" — a single sentence explaining why this task clears the path.
+- Friction is never a character flaw. Frame every struggle as insufficient emotional pull toward the North Star — never as laziness, lack of discipline, or weak willpower.
+- Absolutely no gamification. No points, badges, streaks, or rewards. No superficial cheerleading. This is not a game.
 
 Output Format (JSON only, no markdown):
 {
@@ -125,7 +128,7 @@ function getFallbackTasks(
   const resetTasks: Record<string, { title: string; hook: string }> = {
     OVERTHINKING: {
       title: 'Clear your workspace of open loops',
-      hook: 'Fewer open items means fewer background processes draining your focus.',
+      hook: 'Fewer open items means fewer background processes occupying mental space.',
     },
     ENERGY_CRASH: {
       title: 'Set a timer and take a structured break',
@@ -133,7 +136,7 @@ function getFallbackTasks(
     },
     DISTRACTION: {
       title: 'Close all non-essential tabs and notifications',
-      hook: 'Every closed tab is one fewer decision pulling at your attention.',
+      hook: 'Every closed tab is one fewer decision competing for your attention.',
     },
   };
 

@@ -160,7 +160,7 @@ export async function POST(req: NextRequest) {
         plan.blocks.unshift({
           kind: 'task',
           taskId: 'adaptive-buffer-id',
-          title: `🛡️ [Adaptive Buffer] Focus Breather (${injectedBufferMinutes}m)`,
+          title: `[Buffer] Focus Breather (${injectedBufferMinutes}m)`,
           minutes: injectedBufferMinutes,
         });
       }
@@ -237,7 +237,7 @@ export async function POST(req: NextRequest) {
         plan.blocks.unshift({
           kind: 'task',
           taskId: 'adaptive-buffer-id',
-          title: `🛡️ [Adaptive Buffer] Focus Breather (${injectedBufferMinutes}m)`,
+          title: `[Buffer] Focus Breather (${injectedBufferMinutes}m)`,
           minutes: injectedBufferMinutes,
         });
       }

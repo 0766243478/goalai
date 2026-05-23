@@ -244,7 +244,7 @@ export function applyAdaptiveVisionModifications(
       return {
         ...task,
         durationMinutes,
-        title: hasCompressed ? `✨ [Adaptive Light] ${task.title}` : task.title,
+        title: hasCompressed ? `[Light] ${task.title}` : task.title,
       };
     });
 
