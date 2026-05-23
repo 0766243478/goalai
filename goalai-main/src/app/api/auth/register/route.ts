@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { prisma } from '@/lib/db';
+import { applySupabaseCookies, createSupabaseRouteClient } from '@/lib/supabase/route';
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,10 +23,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 });
     }
 
-    // Check Prisma for existing email (catches guest/dev users)
+    // Check Prisma for existing email
     const existingPrismaUser = await prisma.user.findUnique({ where: { email } });
     if (existingPrismaUser) {
-      return NextResponse.json({ error: 'Email already registered' }, { status: 400 });
+      return NextResponse.json({ error: 'An account with this email already exists.' }, { status: 400 });
     }
 
     // Create user in Supabase Auth using service role key
@@ -46,38 +47,67 @@ export async function POST(req: NextRequest) {
     });
 
     if (signUpError) {
-      // Check if the error indicates a duplicate email from Supabase
-      if (signUpError.message?.toLowerCase().includes('already') || signUpError.message?.toLowerCase().includes('exists') || signUpError.message?.toLowerCase().includes('duplicate')) {
-        return NextResponse.json({ error: 'Email already registered' }, { status: 400 });
-      }
       return NextResponse.json({ error: signUpError.message }, { status: 400 });
     }
 
     if (!data.user) {
-      return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
+      return NextResponse.json({ error: 'Failed to create user in auth system' }, { status: 500 });
     }
 
     // Create corresponding Prisma user
-    await prisma.user.create({
-      data: {
-        id: data.user.id,
-        email: data.user.email ?? email,
-        northStar: null,
-        valueSkill: null,
-        frictionTrigger: 'OVERTHINKING',
-        dailyWindowMinutes: 30,
-        internalTrustScore: 0.5,
-        trustScore: 500,
-        loadMultiplier: 1.0,
-      },
+    try {
+      await prisma.user.create({
+        data: {
+          id: data.user.id,
+          email: data.user.email ?? email,
+          northStar: null,
+          valueSkill: null,
+          frictionTrigger: 'OVERTHINKING',
+          dailyWindowMinutes: 30,
+          internalTrustScore: 0.5,
+          trustScore: 500,
+          loadMultiplier: 1.0,
+        },
+      });
+    } catch (dbError) {
+      // Prisma failed — roll back Supabase user to avoid orphan accounts
+      try {
+        await supabaseAdmin.auth.admin.deleteUser(data.user.id);
+      } catch {
+        // Non-critical cleanup
+      }
+      const message = dbError instanceof Error ? dbError.message : 'Database error';
+      return NextResponse.json({ error: `Failed to create profile: ${message}` }, { status: 500 });
+    }
+
+    // Sign the user in to establish a session (so they don't need to manually log in)
+    const { supabase: routeSupabase, cookiesToSet } = await createSupabaseRouteClient();
+    const { error: signInError } = await routeSupabase.auth.signInWithPassword({
+      email,
+      password,
     });
 
-    return NextResponse.json({
-      success: true,
-      user: { id: data.user.id, email: data.user.email ?? email },
-    });
+    if (signInError) {
+      return applySupabaseCookies(
+        NextResponse.json({
+          success: true,
+          user: { id: data.user.id, email: data.user.email ?? email },
+          warning: 'Account created but auto-sign-in failed. Please sign in manually.',
+        }),
+        cookiesToSet
+      );
+    }
+
+    return applySupabaseCookies(
+      NextResponse.json({
+        success: true,
+        user: { id: data.user.id, email: data.user.email ?? email },
+      }),
+      cookiesToSet
+    );
   } catch (error) {
     console.error('Registration error:', error);
-    return NextResponse.json({ error: 'Registration failed. Please try again.' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Registration failed';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

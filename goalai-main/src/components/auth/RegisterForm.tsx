@@ -23,19 +23,17 @@ export default function RegisterForm() {
       });
       const data = await res.json();
       if (!res.ok) {
-        const msg = data.error || "Unable to sign up.";
-        if (msg.includes("already registered") || msg.includes("already exists")) {
-          setError("An account with this email already exists.");
-        } else if (msg.includes("Password must be")) {
-          setError(msg);
-        } else {
-          setError(msg);
-        }
+        setError(data.error || `Server error (${res.status})`);
+        return;
+      }
+      if (data.warning) {
+        // Account created but session not established
+        router.push("/login");
         return;
       }
       router.push("/dashboard");
-    } catch {
-      setError("Unable to sign up. Please try again.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
     } finally {
       setBusy(false);
     }
@@ -78,7 +76,11 @@ export default function RegisterForm() {
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
-          {error && <p className="text-red-500 text-xs text-center">{error}</p>}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+              <p className="text-red-700 text-sm text-center">{error}</p>
+            </div>
+          )}
           <button
             onClick={handleSignUp}
             disabled={!email.trim() || password.length < 6 || busy}

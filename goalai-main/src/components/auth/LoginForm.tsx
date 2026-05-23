@@ -23,16 +23,7 @@ export default function LoginForm() {
         password,
       });
       if (authError) {
-        const msg = authError.message;
-        if (msg.includes("Invalid login credentials")) {
-          setError("Invalid email or password.");
-        } else if (msg.includes("Email not confirmed")) {
-          setError("Please confirm your email before signing in.");
-        } else if (msg.includes("rate_limit")) {
-          setError("Too many attempts. Please wait a moment.");
-        } else {
-          setError(msg);
-        }
+        setError(authError.message);
         return;
       }
       if (data.user?.email_confirmed_at == null) {
@@ -40,8 +31,8 @@ export default function LoginForm() {
         return;
       }
       router.push("/dashboard");
-    } catch {
-      setError("Unable to sign in. Please try again.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
     } finally {
       setBusy(false);
     }
@@ -84,7 +75,11 @@ export default function LoginForm() {
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
-          {error && <p className="text-red-500 text-xs text-center">{error}</p>}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+              <p className="text-red-700 text-sm text-center">{error}</p>
+            </div>
+          )}
           <button
             onClick={handleSignIn}
             disabled={!email.trim() || busy}
