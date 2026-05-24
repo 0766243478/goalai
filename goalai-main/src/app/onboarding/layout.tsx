@@ -5,7 +5,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 export const metadata: Metadata = {
   title: "Get Started - Setup in 90 Seconds",
   description:
-    "Set up GoalAI in 90 seconds. Answer 4 quick questions and start receiving 3 AI-generated daily tasks personalized to your goals and energy levels.",
+    "Set up Gaolaif in 90 seconds. Answer 4 quick questions and start receiving 3 AI-generated daily tasks personalized to your goals and energy levels.",
 };
 
 export default async function OnboardingLayout({

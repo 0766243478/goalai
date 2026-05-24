@@ -2,60 +2,59 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://gan.network";
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://gaolaif.org";
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
   title: {
-    default: "GoalAI - AI-Powered Decision Elimination System | 3 Daily Tasks",
-    template: "%s | GoalAI",
+    default: "Gaolaif | Calm Certainty Framework",
+    template: "%s | Gaolaif",
   },
   description:
-    "GoalAI eliminates decision fatigue by giving you exactly 3 personalized daily tasks calibrated to your capacity. Stop deciding. Start executing. AI-powered productivity without the overwhelm.",
+    "A behavioral design workspace built to eliminate friction and provide psychological relief through execution, powered by autonomous AI pattern analysis. No gamification.",
   keywords: [
-    "decision fatigue",
-    "AI task manager",
-    "daily task planner",
-    "productivity app",
+    "behavioral design",
+    "execution engine",
+    "user trust score",
+    "reduce friction",
+    "mental bandwidth optimization",
+    "calm certainty",
+    "productivity framework",
+    "Gaolaif",
     "decision elimination",
-    "AI productivity",
-    "task management",
-    "focus app",
-    "daily planner",
-    "GoalAI",
-    "personalized tasks",
-    "reduce overwhelm",
-    "3 daily tasks",
-    "smart task generation",
+    "AI pattern analysis",
+    "friction reduction",
+    "execution system",
   ],
-  authors: [{ name: "GoalAI" }],
-  creator: "GoalAI",
-  publisher: "GoalAI",
+  authors: [{ name: "Gaolaif" }],
+  creator: "Gaolaif",
+  publisher: "Gaolaif",
   manifest: "/manifest.json",
   category: "productivity",
-  applicationName: "GoalAI",
+  applicationName: "Gaolaif",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: appUrl,
-    siteName: "GoalAI",
-    title: "GoalAI - Stop Deciding. Start Executing.",
+    siteName: "Gaolaif",
+    title: "Gaolaif | Calm Certainty Framework",
     description:
-      "AI-powered Decision Elimination System. Get exactly 3 personalized daily tasks calibrated to your energy and capacity. No more decision fatigue.",
+      "A behavioral design workspace built to eliminate friction and provide psychological relief through execution, powered by autonomous AI pattern analysis. No gamification. No streaks. Calm, focused execution.",
     images: [
       {
         url: "/icons/icon-512.png",
         width: 512,
         height: 512,
-        alt: "GoalAI - Decision Elimination System",
+        alt: "Gaolaif — Calm Certainty Framework",
       },
     ],
   },
   twitter: {
-    card: "summary",
-    title: "GoalAI - AI-Powered Decision Elimination System",
+    card: "summary_large_image",
+    site: "@gaolaif",
+    title: "Gaolaif | Calm Certainty Framework",
     description:
-      "Stop deciding. Start executing. 3 AI-generated tasks every day, calibrated to your capacity.",
+      "Eliminate friction. Execute with calm certainty. AI-powered behavioral design workspace. No gamification.",
     images: ["/icons/icon-512.png"],
   },
   robots: {
@@ -75,7 +74,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "GoalAI",
+    title: "Gaolaif",
   },
   formatDetection: {
     telephone: false,
@@ -86,7 +85,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1e40af",
+  themeColor: "#233dff",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -96,11 +95,11 @@ export const viewport: Viewport = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  name: "GoalAI",
+  name: "Gaolaif",
   applicationCategory: "ProductivityApplication",
   operatingSystem: "Web",
   description:
-    "AI-powered Decision Elimination System that provides exactly 3 personalized daily tasks calibrated to your capacity. Eliminates decision fatigue through intelligent task generation.",
+    "A behavioral design workspace that eliminates friction through autonomous AI pattern analysis. Calm certainty. No gamification.",
   url: appUrl,
   offers: {
     "@type": "Offer",
@@ -108,13 +107,12 @@ const jsonLd = {
     priceCurrency: "USD",
   },
   featureList: [
-    "AI-powered daily task generation",
-    "Personalized to your goals and capacity",
+    "AI-powered friction detection and buffer injection",
     "Internal Trust Score for adaptive difficulty",
-    "Decision fatigue elimination",
+    "Calm Certainty tone — no gamification, no streaks",
     "3 focused tasks per day (Execute, Value, Reset)",
+    "Autonomous AI pattern analysis without user effort",
     "Progressive Web App - works offline",
-    "No account required - guest mode",
   ],
   screenshot: `${appUrl}/icons/icon-512.png`,
 };
@@ -125,34 +123,34 @@ const faqJsonLd = {
   mainEntity: [
     {
       "@type": "Question",
-      name: "What is GoalAI?",
-      acceptedAnswer: {
+      "name": "What is Gaolaif?",
+      "acceptedAnswer": {
         "@type": "Answer",
-        text: "GoalAI is an AI-powered Decision Elimination System that gives you exactly 3 personalized daily tasks calibrated to your energy and capacity. It eliminates decision fatigue by deciding what you should focus on each day.",
+        "text": "Gaolaif is a behavioral design workspace that eliminates friction through autonomous AI pattern analysis. It gives you exactly 3 daily tasks calibrated to your capacity and adapts based on your Internal Trust Score. No gamification, no streaks — just calm, focused execution.",
       },
     },
     {
       "@type": "Question",
-      name: "How does GoalAI work?",
-      acceptedAnswer: {
+      "name": "How does Gaolaif's friction detection work?",
+      "acceptedAnswer": {
         "@type": "Answer",
-        text: "GoalAI uses AI to generate 3 daily tasks across three categories: Execute (your main goal), Value (income-generating skill), and Reset (mental clarity). Tasks adapt based on your Internal Trust Score, which tracks your completion patterns.",
+        "text": "Gaolaif analyzes your task completion patterns, interruption history, and SWOT profile to identify high-risk windows for friction. It autonomously injects focus buffers, compresses non-essential tasks, and adjusts load to match your current capacity. You don't configure anything — the engine adapts to you.",
       },
     },
     {
       "@type": "Question",
-      name: "Is GoalAI free to use?",
-      acceptedAnswer: {
+      "name": "Is Gaolaif free to use?",
+      "acceptedAnswer": {
         "@type": "Answer",
-        text: "Yes, GoalAI is completely free. No sign-up required - you can start as a guest immediately. It works as a Progressive Web App that you can add to your home screen.",
+        "text": "Yes, Gaolaif is completely free. No sign-up required — you can start as a guest immediately. It works as a Progressive Web App that you can add to your home screen.",
       },
     },
     {
       "@type": "Question",
-      name: "What makes GoalAI different from other task managers?",
-      acceptedAnswer: {
+      "name": "What makes Gaolaif different from other productivity tools?",
+      "acceptedAnswer": {
         "@type": "Answer",
-        text: "Unlike traditional task managers where you decide what to do, GoalAI decides for you. It limits you to exactly 3 tasks per day, uses AI to calibrate difficulty to your capacity, and adapts over time based on your completion patterns. No gamification, no streaks - just calm, focused execution.",
+        "text": "Unlike traditional task managers where you decide what to do, Gaolaif decides for you. It limits you to exactly 3 tasks per day, uses autonomous AI to detect friction patterns and inject buffers before you fail, and adapts over time based on your completion patterns. No gamification, no streaks, no fake rewards — just calm certainty.",
       },
     },
   ],

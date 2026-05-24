@@ -10,7 +10,7 @@ import DashboardDataProvider from "./DashboardDataProvider";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const GUEST_COOKIE = 'goalai_guest';
+  const GUEST_COOKIE = 'gaolaif_guest';
 
   // Try Supabase auth first
   let userId: string | null = null;

@@ -35,7 +35,7 @@ export default async function Welcome() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-relief-bg p-6">
       <div className="mb-8 flex justify-center">
-        <h1 className="text-3xl font-semibold text-gray-900 text-center">GoalAI</h1>
+        <h1 className="text-3xl font-semibold text-gray-900 text-center">Gaolaif</h1>
       </div>
 
       <p className="text-gray-400 text-center max-w-xs mx-auto mb-12 text-sm leading-relaxed">

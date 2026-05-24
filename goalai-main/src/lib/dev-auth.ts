@@ -1,7 +1,7 @@
 import { prisma } from './db';
 
 export const DEV_USER_ID = '00000000-0000-0000-0000-000000000001';
-export const GUEST_COOKIE = 'goalai_guest';
+export const GUEST_COOKIE = 'gaolaif_guest';
 
 export async function ensureGuestUser(): Promise<{ id: string; email: string | null; northStar: string | null }> {
   const existing = await prisma.user.findUnique({ where: { id: DEV_USER_ID } });
@@ -10,7 +10,7 @@ export async function ensureGuestUser(): Promise<{ id: string; email: string | n
   await prisma.user.create({
     data: {
       id: DEV_USER_ID,
-      email: 'dev@goalai.local',
+      email: 'dev@gaolaif.org',
       isGuest: true,
       northStar: 'Master local development',
       valueSkill: 'full-stack engineering',

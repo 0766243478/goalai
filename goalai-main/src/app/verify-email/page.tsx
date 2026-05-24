@@ -5,7 +5,7 @@ export default function VerifyEmailPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-relief-bg p-6">
       <div className="mb-8 flex justify-center">
-        <Image src="/logo.png" alt="GoalAI" width={64} height={64} className="object-contain" />
+        <Image src="/logo.png" alt="Gaolaif" width={64} height={64} className="object-contain" />
       </div>
       <h1 className="text-2xl font-semibold text-gray-900 text-center mb-2">Verify your email</h1>
       <p className="text-gray-400 text-center max-w-sm text-sm leading-relaxed mb-8">

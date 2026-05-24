@@ -5,7 +5,7 @@ import { prisma } from "@/lib/db";
 import SwotWizard from "./SwotWizard";
 
 export default async function SwotPage() {
-  const GUEST_COOKIE = 'goalai_guest';
+  const GUEST_COOKIE = 'gaolaif_guest';
 
   let userId: string | null = null;
   try {
@@ -63,7 +63,7 @@ export default async function SwotPage() {
     <main className="min-h-screen bg-relief-bg px-6 py-8">
       <div className="max-w-lg mx-auto">
         <h1 className="text-xl font-semibold text-gray-900 mb-1">Your Strategic Profile</h1>
-        <p className="text-sm text-gray-500 mb-6">GoalAI uses your SWOT to build a personalized daily engine.</p>
+        <p className="text-sm text-gray-500 mb-6">Gaolaif uses your SWOT to build a personalized daily engine.</p>
         <SwotWizard initial={swot} />
       </div>
     </main>

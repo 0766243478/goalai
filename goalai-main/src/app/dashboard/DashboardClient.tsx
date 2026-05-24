@@ -20,7 +20,7 @@ function TrustScoreWidget() {
         <p className="text-2xl font-semibold text-gray-900">{trustScore ?? 500}</p>
       </div>
       <div className="text-right">
-        <p className="text-[10px] uppercase tracking-widest text-gray-400">GoalAI</p>
+        <p className="text-[10px] uppercase tracking-widest text-gray-400">Gaolaif</p>
         <p className="text-xs text-gray-500">{data.user.valueSkill}</p>
       </div>
     </div>

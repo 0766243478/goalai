@@ -47,7 +47,7 @@ export function applySupabaseCookies(response: NextResponse, cookiesToSet: Cooki
   return response;
 }
 
-const GUEST_COOKIE = 'goalai_guest';
+const GUEST_COOKIE = 'gaolaif_guest';
 
 /**
  * Tries Supabase auth first, then falls back to the guest/dev cookie session.
