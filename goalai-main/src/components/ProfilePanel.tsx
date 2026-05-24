@@ -31,6 +31,7 @@ export default function ProfilePanel({ open, onClose }: ProfilePanelProps) {
   const [saving, setSaving] = useState(false);
   const [swotTab, setSwotTab] = useState<"strengths" | "weaknesses" | "opportunities" | "threats">("strengths");
   const [, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const loadProfile = useCallback(async () => {
     if (!open) return;
@@ -67,54 +68,73 @@ export default function ProfilePanel({ open, onClose }: ProfilePanelProps) {
 
   const handleSaveGoals = async () => {
     setSaving(true);
+    setError(null);
     try {
-      await fetch("/api/user", {
+      const res = await fetch("/api/user", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ northStar, valueSkill, frictionTrigger: friction, dailyWindowMinutes: dailyWindow }),
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || `Save failed (${res.status})`);
+      }
+    } catch {
+      setError("Unable to save. Check your connection.");
     } finally { setSaving(false); }
   };
 
   const handleSaveSwot = async () => {
     setSaving(true);
+    setError(null);
     try {
-      await fetch("/api/swot", {
+      const res = await fetch("/api/swot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(swot),
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || `SWOT save failed (${res.status})`);
+      }
+    } catch {
+      setError("Unable to save SWOT. Check your connection.");
     } finally { setSaving(false); }
   };
 
   const addSwotItem = () => {
     const trimmed = newItem.trim();
     if (!trimmed) return;
-    setSwot((prev) => ({
-      ...prev,
-      [swotTab]: [...prev[swotTab], trimmed],
-    }));
+    setSwot((prev) => {
+      const updated = { ...prev, [swotTab]: [...prev[swotTab], trimmed] };
+      fetch("/api/swot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated),
+      }).catch(() => {});
+      return updated;
+    });
     setNewItem("");
   };
 
   const removeSwotItem = (index: number) => {
-    setSwot((prev) => ({
-      ...prev,
-      [swotTab]: prev[swotTab].filter((_, i) => i !== index),
-    }));
-  };
-
-  const syncSwot = useCallback(async (updatedSwot: typeof swot) => {
-    try {
-      await fetch("/api/swot", {
+    setSwot((prev) => {
+      const item = prev[swotTab][index];
+      const updated = { ...prev, [swotTab]: prev[swotTab].filter((_, i) => i !== index) };
+      if (swotTab === "weaknesses") {
+        updated.weaknessesOvercome = updated.weaknessesOvercome.filter((w) => w !== item);
+      }
+      if (swotTab === "threats") {
+        updated.threatsResolved = updated.threatsResolved.filter((t) => t !== item);
+      }
+      fetch("/api/swot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedSwot),
-      });
-    } catch {
-      // Silent fail
-    }
-  }, []);
+        body: JSON.stringify(updated),
+      }).catch(() => {});
+      return updated;
+    });
+  };
 
   const toggleOvercome = (item: string) => {
     setSwot((prev) => {
@@ -125,7 +145,11 @@ export default function ProfilePanel({ open, onClose }: ProfilePanelProps) {
           ? prev.weaknessesOvercome.filter((w) => w !== item)
           : [...prev.weaknessesOvercome, item],
       };
-      syncSwot(updated);
+      fetch("/api/swot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated),
+      }).catch(() => {});
       return updated;
     });
   };
@@ -139,7 +163,11 @@ export default function ProfilePanel({ open, onClose }: ProfilePanelProps) {
           ? prev.threatsResolved.filter((t) => t !== item)
           : [...prev.threatsResolved, item],
       };
-      syncSwot(updated);
+      fetch("/api/swot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated),
+      }).catch(() => {});
       return updated;
     });
   };
@@ -168,14 +196,19 @@ export default function ProfilePanel({ open, onClose }: ProfilePanelProps) {
 
         {/* Tabs */}
         <div className="flex border-b border-gray-100 px-5">
-          <button onClick={() => setTab("goals")} className={`px-4 py-3 text-xs font-semibold border-b-2 transition-colors ${tab === "goals" ? "border-gray-900 text-gray-900" : "border-transparent text-gray-400 hover:text-gray-600"}`}>North Star</button>
-          <button onClick={() => setTab("swot")} className={`px-4 py-3 text-xs font-semibold border-b-2 transition-colors ${tab === "swot" ? "border-gray-900 text-gray-900" : "border-transparent text-gray-400 hover:text-gray-600"}`}>SWOT</button>
+          <button onClick={() => { setTab("goals"); setError(null); }} className={`px-4 py-3 text-xs font-semibold border-b-2 transition-colors ${tab === "goals" ? "border-gray-900 text-gray-900" : "border-transparent text-gray-400 hover:text-gray-600"}`}>North Star</button>
+          <button onClick={() => { setTab("swot"); setError(null); }} className={`px-4 py-3 text-xs font-semibold border-b-2 transition-colors ${tab === "swot" ? "border-gray-900 text-gray-900" : "border-transparent text-gray-400 hover:text-gray-600"}`}>SWOT</button>
         </div>
 
         <div className="p-5 space-y-5">
           {/* GOALS TAB */}
           {tab === "goals" && (
             <>
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                  <p className="text-sm text-red-700 text-center">{error}</p>
+                </div>
+              )}
               <div>
                 <label className="text-xs text-gray-500 mb-1 block">North Star (Core Goal)</label>
                 <input type="text" value={northStar} onChange={(e) => setNorthStar(e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-300" placeholder="e.g., Master full-stack development" />
@@ -207,6 +240,11 @@ export default function ProfilePanel({ open, onClose }: ProfilePanelProps) {
           {/* SWOT TAB */}
           {tab === "swot" && (
             <>
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                  <p className="text-sm text-red-700 text-center">{error}</p>
+                </div>
+              )}
               <div className="flex flex-wrap gap-2">
                 {swotTabs.map((t) => (
                   <button key={t.key} onClick={() => setSwotTab(t.key)}
